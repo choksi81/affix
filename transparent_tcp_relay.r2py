@@ -284,10 +284,11 @@ def launch_server_communication_thread(sockobj, server_id):
     	  else:
       	    logmsg("Got connection from " + str(client_ip) + ":" + str(client_port), INFO_MSG)
             try:
-              conn_init_message_client = session.session_recvmessage(clientsockobj)
+              #conn_init_message_client = session.session_recvmessage(clientsockobj)
+              conn_init_message_client = server_socket.recv(1400)
               logmsg(str(client_ip) + ":" + str(client_port) + " said " + 
               conn_init_message, DEBUG_MSG)
-              (conn_type_client, conn_id_client) = conn_init_message_client.split(',')
+              #(conn_type_client, conn_id_client) = conn_init_message_client.split(',')
 	    except Exception, err: # XXX Likely too broad an except
               logmsg("Error in connection establishment with " + str(client_ip) + 
               ":" + str(client_port) + ": " + 

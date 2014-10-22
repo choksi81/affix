@@ -274,7 +274,7 @@ def launch_server_communication_thread(sockobj, server_id):
         while True:
           try:
       	    # Try to see if there is any connection waiting.
-      	    client_ip, client_port, clientsockobj = tcp_server_sock.getconnection() # XXX Use a timeout socket instead to avoid malicious clients/servers blocking sockets forever
+      	    client_ip, client_port, clientsockobj = server_socket.getconnection() # XXX Use a timeout socket instead to avoid malicious clients/servers blocking sockets forever
       	    logmsg("Incoming connection from '%s:%d'" % (client_ip, client_port), 
         	  INFO_MSG)
 	  except SocketWouldBlockError:

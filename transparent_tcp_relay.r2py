@@ -264,8 +264,8 @@ def launch_server_communication_thread(sockobj, server_id):
             session.session_sendmessage(sockobj, CLIENT_UNAVAILABLE)
       
       
-        mycontext['listenserverport']= server_port
-        tcp_server_sock = listenforconnection(getmyip(),mycontext['listenserverport'])
+        #mycontext['listenserverport']= server_port
+        #tcp_server_sock = listenforconnection(getmyip(),mycontext['listenserverport'])
           
         logmsg("Started TCP Server listener on '%s' port '%d'" % 
         (getmyip(), mycontext['listenserverport']), INFO_MSG)

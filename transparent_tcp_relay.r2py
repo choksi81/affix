@@ -237,9 +237,9 @@ def launch_server_communication_thread(sockobj, server_id):
         logtn("Error in listenforconnection on", getmyip(), "port", 
             server_port, repr(e))
         sleep(1)
-    else:
-      logtn("Could not find a port I can listen on. Exiting.")
-      exitall()
+      else:
+        logtn("Could not find a port I can listen on. Exiting.")
+        exitall()
     
     
     

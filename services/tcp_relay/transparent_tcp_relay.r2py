@@ -205,8 +205,9 @@ def launch_server_communication_thread(sockobj, server_id):
     <Purpose>
       This thread is launched after a server has registered with
       the nat forwarder. This thread will keep running until the
-      control socket for the server has been closed. It is used
-      for communicating with the server. The server may ping from
+      control socket for the server has been closed. It opens up 
+      a port to listen for client connection.It is used for 
+      communicating with the server. The server may ping from
       time to time to check if there are any clients waiting for
       it. If there are then the server will create a connection
       with the Nat Forwarder.

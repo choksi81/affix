@@ -68,7 +68,7 @@ class NatSockObj:
     return self._server_id
 
 
-class TCPRelayAffix(baseaffix.BaseAffix):
+class TransparentTCPRelayAffix(baseaffix.BaseAffix):
 
 
   def __init__(self, next_affix, optional_args = None):

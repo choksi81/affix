@@ -64,7 +64,7 @@ def tcp_forwarder_listener():
          (getmyip(), mycontext['listenport_tcp']), INFO_MSG)
          
          
-while True:
+  while True:
     
     try:
       # Try to see if there is any connection waiting.
@@ -98,8 +98,8 @@ while True:
         elif conn_type == CONNECT_SERVER_TAG:
         # This is the case when a registered server opens up a connection to
         # the forwarder in order for it to be connected to a client.
-        logmsg("Received request from server '%s:%d' to connect to a client." % (remote_ip, remote_port), INFO_MSG)
-        createthread(handle_server_conn_request(remote_ip, remote_port, conn_id, sockobj))
+          logmsg("Received request from server '%s:%d' to connect to a client." % (remote_ip, remote_port), INFO_MSG)
+          createthread(handle_server_conn_request(remote_ip, remote_port, conn_id, sockobj))
         
         
           
@@ -205,9 +205,8 @@ def launch_server_communication_thread(sockobj, server_id):
     <Purpose>
       This thread is launched after a server has registered with
       the nat forwarder. This thread will keep running until the
-      control socket for the server has been closed. It opens up 
-      a port to listen for client connection.It is used for 
-      communicating with the server. The server may ping from
+      control socket for the server has been closed. It is used
+      for communicating with the server. The server may ping from
       time to time to check if there are any clients waiting for
       it. If there are then the server will create a connection
       with the Nat Forwarder.
@@ -287,8 +286,8 @@ def launch_server_communication_thread(sockobj, server_id):
 # Listen for client
 # ====================================================
 
-def listen_for_client(server_socket, server_id)  
-  def _client_listener:
+def listen_for_client(server_socket, server_id):
+  def _client_listener():
     while True:
       try:
         # Try to see if there is any connection waiting.

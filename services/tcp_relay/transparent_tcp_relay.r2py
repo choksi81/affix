@@ -255,7 +255,8 @@ def launch_server_communication_thread(sockobj, server_id):
         # clients waiting to be connected.
         
       createthread(listen_for_client(client_socket, server_id, sockobj))
-
+      
+    """
     #while True:  
       try:
         request_type = session.session_recvmessage(sockobj)
@@ -272,6 +273,7 @@ def launch_server_communication_thread(sockobj, server_id):
         logmsg("Unexpected error in launch_server_communication_thread: " + 
           str(type(err)) + " " + str(err), ERR_MSG)
         break
+    """
 
     sockobj.close()
 

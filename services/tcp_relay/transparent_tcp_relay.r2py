@@ -246,8 +246,8 @@ def launch_server_communication_thread(sockobj, server_id):
           client_socket = listenforconnection(getmyip(), client_port)
           break
         except Exception, e:
-          logtn("Error in listenforconnection on", getmyip(), "port", 
-              client_port, repr(e))
+          logmsg("Error in listenforconnection on" + getmyip() + "port"
+              + client_port, DEBUG_MSG)
           sleep(1)
       try:
         session.session_sendmessage(sockobj, str(client_port))

@@ -242,15 +242,15 @@ def launch_server_communication_thread(sockobj, server_id):
     while True:
       for client_port in allowed_tcp_ports:
         try:
+          logmsg("Opening Client Port:" + str(client_port), INFO_MSG)
           client_socket = listenforconnection(getmyip(), client_port)
           break
         except Exception, e:
           logtn("Error in listenforconnection on", getmyip(), "port", 
               client_port, repr(e))
           sleep(1)
-          break
       try:
-        session.session_sendmessage(sockobj, client_port)
+        session.session_sendmessage(sockobj, str(client_port))
       except SocketClosedRemote, err:
         logmsg("Socket closed. " + repr(err), DEBUG_MSG)
         unregister_server(server_id)

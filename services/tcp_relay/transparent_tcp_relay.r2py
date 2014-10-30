@@ -254,7 +254,7 @@ def launch_server_communication_thread(sockobj, server_id):
         # Check if the server is requesting to see if there is any
         # clients waiting to be connected.
         
-      createthread(listen_for_client(client_socket, server_id))
+      createthread(listen_for_client(client_socket, server_id, sockobj))
 
     #while True:  
       try:
@@ -286,7 +286,7 @@ def launch_server_communication_thread(sockobj, server_id):
 # Listen for client
 # ====================================================
 
-def listen_for_client(client_socket, server_id):
+def listen_for_client(client_socket, server_id, serversockobj):
   def _client_listener():
     while True:
       try:
@@ -294,6 +294,7 @@ def listen_for_client(client_socket, server_id):
       	client_ip, client_port, clientsockobj = client_socket.getconnection() # XXX Use a timeout socket instead to avoid malicious clients/servers blocking sockets forever  	
       	logmsg("Incoming connection from '%s:%d'" % (client_ip, client_port), 
             INFO_MSG)
+        session.session_sendmessage(serversockobj, CLIENT_AVAILABLE)
         createthread(handle_client_request(client_ip, client_port, server_id, clientsockobj))
       except SocketWouldBlockError:
         sleep(SLEEP_TIME)

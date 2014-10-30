@@ -246,7 +246,7 @@ def launch_server_communication_thread(sockobj, server_id):
           client_socket = listenforconnection(getmyip(), client_port)
           break
         except Exception, e:
-          logmsg("Error in listenforconnection on" + str(getmyip()) + "port"
+          logmsg("Error in listenforconnection on " + str(getmyip()) + " port "
               + str(client_port), DEBUG_MSG)
           sleep(1)
       try:

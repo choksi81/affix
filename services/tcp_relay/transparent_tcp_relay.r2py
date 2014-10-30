@@ -100,6 +100,9 @@ def tcp_forwarder_listener():
         # the forwarder in order for it to be connected to a client.
         logmsg("Received request from server '%s:%d' to connect to a client." % (remote_ip, remote_port), INFO_MSG)
         createthread(handle_server_conn_request(remote_ip, remote_port, conn_id, sockobj))
+      else: # XXX We should also close the control connection on errors!
+        logmsg("Incorrect connection type received from '%s:%d': %s" % 
+              (remote_ip, remote_port, conn_type), ERR_MSG)
         
         
           

@@ -18,6 +18,7 @@ affix_stack = dy_import_module("affix_stack.r2py")
 dy_import_module_symbols("tcp_relay_common_lib.r2py")
 canilisten = dy_import_module("canilisten.r2py")
 time = dy_import_module("time.r2py")
+random = dy_import_module("random.r2py")
 
 SLEEP_TIME = 0.001
 MAX_BUFFER_LEN = 1400

@@ -90,16 +90,16 @@ def tcp_forwarder_listener():
         continue
         
         
-        if conn_type == SERVER_REGISTER:
+      if conn_type == SERVER_REGISTER:
         # This is the case where a new server wants to register to this
         # NAT Forwarder.
-          createthread(register_new_server(remote_ip, remote_port, conn_id, sockobj))
-          logmsg("Registered server " + remote_ip + ":" + str(remote_port), DEBUG_MSG)
-        elif conn_type == CONNECT_SERVER_TAG:
+        createthread(register_new_server(remote_ip, remote_port, conn_id, sockobj))
+        logmsg("Registered server " + remote_ip + ":" + str(remote_port), DEBUG_MSG)
+      elif conn_type == CONNECT_SERVER_TAG:
         # This is the case when a registered server opens up a connection to
         # the forwarder in order for it to be connected to a client.
-          logmsg("Received request from server '%s:%d' to connect to a client." % (remote_ip, remote_port), INFO_MSG)
-          createthread(handle_server_conn_request(remote_ip, remote_port, conn_id, sockobj))
+        logmsg("Received request from server '%s:%d' to connect to a client." % (remote_ip, remote_port), INFO_MSG)
+        createthread(handle_server_conn_request(remote_ip, remote_port, conn_id, sockobj))
         
         
           

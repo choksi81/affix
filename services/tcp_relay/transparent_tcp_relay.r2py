@@ -490,6 +490,30 @@ def handle_server_conn_request(remote_ip, remote_port, server_id, sockobj):
   return _handle_server_conn_request_helper
 
 
+def unregister_server(server_id):
+  """
+  The purpose of this function is to remove a registered
+  server from the registered server dictionary. Thus un-
+  registering the server.
+  """
+  register_lock.acquire(True)
+  try:
+    registered_server.pop(server_id)
+    logmsg("Unregistered server '" + server_id + "'. " + 
+        str(MAX_SERVERS - len(registered_server)) + 
+        " server slots free.", INFO_MSG) 
+  except KeyError:
+    # If the server id does not exist, we don't
+    # need to worry about it.
+    logmsg("Attempted to unregister unknow server '%s'" % server_id, DEBUG_MSG)
+    pass
+  except Exception, err:
+    logmsg("Unexpected error while unregistering server '%s': %s" % (str(server_id), repr(err)), DEBUG_MSG)
+  finally:
+    register_lock.release() 
+    
+    
+
 # ==============================================================
 # TCP Forwarder - Actual Message Forwarding
 # ==============================================================

@@ -132,8 +132,8 @@ class TransparentTCPRelayAffix(baseaffix.BaseAffix):
 
     <Return>
       A socket like object.
-  """
-    """
+  
+   
     # If there are no forwarders provided, then we raise a ConnectionRefusedError.
     if not self.default_forwarder:
       raise ConnectionRefusedError("NAT forwarder is not specified. Cannot establish connection.")
@@ -143,8 +143,8 @@ class TransparentTCPRelayAffix(baseaffix.BaseAffix):
     forwarder_ip, forwarder_port = self.default_forwarder
     if _NAT_AFFIX_DEBUG_MODE:
       log(self, "Connecting with %s, %d, %s, %d" % (forwarder_ip, forwarder_port, localip, localport) + "\n")
-    """
-    """
+    
+    
     # Use timeouts during connection setup with the forwarder (so 
     # a rogue forwarder can't block us indefinitely). Once the 
     # connection to the actual destination is set up, drop 
@@ -176,7 +176,8 @@ class TransparentTCPRelayAffix(baseaffix.BaseAffix):
       return sockobj.socket
     else:
       raise ConnectionRefusedError("Could not connect to a NAT forwarder.") 
-    """
+      
+  """
 
 
   def listenforconnection(self, localip, localport):

@@ -256,7 +256,7 @@ class TransparentTCPRelayAffix(baseaffix.BaseAffix):
     # Ask the server if there is any connection that can be made and get back
     # the response.
     try:
-      session.session_sendmessage(nat_serversocket, CHECK_SERVER_CONN)
+      #session.session_sendmessage(nat_serversocket, CHECK_SERVER_CONN)
       nat_response = session.session_recvmessage(nat_serversocket)
 
     except (SocketClosedRemote, sockettimeout.SocketTimeoutError), e:

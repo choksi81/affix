@@ -197,27 +197,7 @@ def register_new_server(remote_ip, remote_port, server_id, sockobj):
   return _register_server_helper
   
 
-# ====================================================
-# Listen for client
-# ====================================================
 
-def listen_for_client(client_socket, server_id, serversockobj):
-
-  def _client_listener():
-    while True:
-      try:
-        # Try to see if there is any connection waiting.
-      	client_ip, client_port, clientsockobj = client_socket.getconnection() # XXX Use a timeout socket instead to avoid malicious clients/servers blocking sockets forever  	
-      	logmsg("Incoming connection from '%s:%d'" % (client_ip, client_port), 
-            INFO_MSG)
-        session.session_sendmessage(serversockobj, CLIENT_AVAILABLE)
-        createthread(handle_client_request(client_ip, client_port, server_id, clientsockobj))
-      except SocketWouldBlockError:
-        sleep(SLEEP_TIME)
-      except Exception, err:
-        logmsg("Error in getconnection: " + str(err), ERR_MSG)
-        
-  return _client_listener 
   
 
 # ====================================================
@@ -266,7 +246,7 @@ def launch_server_communication_thread(sockobj, server_id):
       try:
         client_socket = listenforconnection(getmyip(), client_port)
         logmsg("Opening Client Port:" + str(client_port), INFO_MSG)
-        createthread(listen_for_client(client_socket, server_id, sockobj))
+        #createthread(listen_for_client(client_socket, server_id, sockobj))
         break
       except Exception, e:
         logmsg("Error in listenforconnection on " + str(getmyip()) + " port "
@@ -314,7 +294,29 @@ def launch_server_communication_thread(sockobj, server_id):
   
   
 
+# ====================================================
+# Listen for client
+# ====================================================
 
+def listen_for_client(client_socket, server_id, serversockobj):
+
+  def _client_listener():
+    #logmsg("Opening Ports:", INFO_MSG)
+    while True:
+      try:
+        # Try to see if there is any connection waiting.
+        #logmsg("Opening Ports1:", INFO_MSG)
+      	client_ip, client_port, clientsockobj = client_socket.getconnection() # XXX Use a timeout socket instead to avoid malicious clients/servers blocking sockets forever  	
+      	logmsg("Incoming connection from '%s:%d'" % (client_ip, client_port), 
+            INFO_MSG)
+        session.session_sendmessage(serversockobj, CLIENT_AVAILABLE)
+        createthread(handle_client_request(client_ip, client_port, server_id, clientsockobj))
+      except SocketWouldBlockError:
+        sleep(SLEEP_TIME)
+      except Exception, err:
+        logmsg("Error in getconnection: " + str(err), ERR_MSG)
+        
+  return _client_listener 
 
   
 def handle_client_request(remote_ip, remote_port, server_id, sockobj):

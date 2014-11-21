@@ -111,9 +111,9 @@ class TransparentTCPRelayAffix(baseaffix.BaseAffix):
     baseaffix.BaseAffix.__init__(self, next_affix, optional_args)
 
 
-
+  """
   def openconnection(self, destip, destport, localip, localport, timeout):
-    """
+   
     <Purpose>
       Opens a connection to the server through the NAT forwarder. The client
       opens a connection to the forwarder and sends and receives all message
@@ -131,7 +131,7 @@ class TransparentTCPRelayAffix(baseaffix.BaseAffix):
 
     <Return>
       A socket like object.
-    """
+    
    
     # If there are no forwarders provided, then we raise a ConnectionRefusedError.
     if not self.default_forwarder:
@@ -175,7 +175,7 @@ class TransparentTCPRelayAffix(baseaffix.BaseAffix):
       return sockobj.socket
     else:
       raise ConnectionRefusedError("Could not connect to a NAT forwarder.") 
-      
+  """ 
 
 
   def listenforconnection(self, localip, localport):

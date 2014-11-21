@@ -253,14 +253,14 @@ def launch_server_communication_thread(sockobj, server_id):
             + str(client_port), DEBUG_MSG)
         sleep(1)
           
-      try:
-        session.session_sendmessage(sockobj, str(client_port))
-      except SocketClosedRemote, err:
-        logmsg("Socket closed. " + repr(err), DEBUG_MSG)
-        unregister_server(server_id)
-        break
-        # Check if the server is requesting to see if there is any
-        # clients waiting to be connected.
+    try:
+      session.session_sendmessage(sockobj, str(client_port))
+    except SocketClosedRemote, err:
+      logmsg("Socket closed. " + repr(err), DEBUG_MSG)
+      unregister_server(server_id)
+      break
+      # Check if the server is requesting to see if there is any
+      # clients waiting to be connected.
         
     createthread(listen_for_client(client_socket, server_id, sockobj))
       

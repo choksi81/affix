@@ -1,0 +1,66 @@
+"""
+Overloads a nat forwarder with a low max-client limitation.
+
+Makes sure that the forwarder and affix stack behave in an expected manner
+when this event occurs.  We expect to see an AddressBindingError on the
+server when this occurs.
+
+"""
+#pragma out 0 server slots remain.
+#pragma out Max clients reached.
+
+#pragma repy restrictions.affix dylink.r2py
+#pragma error Unable to connect to any NAT Forwarder.
+
+# required for logging
+time = dy_import_module('time.r2py')
+time.time_updatetime(34612)
+
+session = dy_import_module('session.r2py')
+
+tcp_relay = dy_import_module('transparent_tcp_relay.r2py')
+tcp_relay.MAX_CLIENTS_PER_SERVER = 5
+tcp_relay.MAX_SERVERS = 5
+
+tcp_relay.mycontext['listenport_tcp'] = 12345
+createthread(tcp_relay.tcp_forwarder_listener)
+
+
+dy_import_module_symbols("affix_stack.r2py")
+
+# Set up the Affix stack to use, and override the network calls we need.
+# We'll host the forwarder ourselves for this test.
+affix_object = AffixStack("(TransparentTCPRelayAffix," + getmyip() + ":" + 
+    str(tcp_relay.mycontext['listenport_tcp']) + ")")
+listenforconnection = affix_object.listenforconnection
+# openconnection = affix_object.openconnection
+
+
+def open_socket_and_sleep(port):
+  def open_socket_and_sleep_handler():
+    socket = listenforconnection(getmyip(), port)
+    while True:
+      sleep(1.0)
+    # Needed so that socket doesn't go out of scope too early
+    socket.close()
+  return open_socket_and_sleep_handler
+
+
+# Give the forwarder some time to set up...
+sleep(10)
+
+serverport = 12354
+createthread(open_socket_and_sleep(serverport))
+
+# Give the socket some time to set up...
+sleep(10)
+
+#log(tcp_relay.clientport)
+log("First conn\n")
+clientsock = openconnection(getmyip(), serverport, getmyip(), 12356, 10)
+session_sendmessage(clientsock, "Hello")
+
+# Why do we get stuck after the call to openconn on port 63101...?
+log("Second conn\n")
+openconnection(getmyip(), serverport, getmyip(), 12356, timeout=5)
+

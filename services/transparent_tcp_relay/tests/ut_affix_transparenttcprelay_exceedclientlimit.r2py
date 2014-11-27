@@ -62,5 +62,5 @@ clientsock = openconnection(getmyip(), tcp_socket.client_socket_open, getmyip(),
 
 # Why do we get stuck after the call to openconn on port 63101...?
 log("Second conn\n")
-openconnection(getmyip(),  tcp_socket.client_socket_open, getmyip(), 12357, 1)
+sock1 = openconnection(getmyip(),  tcp_socket.client_socket_open, getmyip(), 12357, 1)
 

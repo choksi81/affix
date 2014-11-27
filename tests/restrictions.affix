@@ -29,3 +29,5 @@ resource connport 12357 # Use for extra source port for openconnection.
 resource connport 12358 # Use for extra source port for openconnection.
 resource connport 12359 # Use for extra source port for openconnection.
 resource connport 12360 # Use for extra source port for openconnection.
+resource connport 12368 # Use for extra source port for openconnection.
+resource messport 34612   # use for getting an NTP update

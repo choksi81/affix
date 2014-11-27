@@ -57,10 +57,10 @@ sleep(10)
 
 #log(tcp_relay.clientport)
 log("First conn\n")
-clientsock = openconnection(getmyip(), serverport, getmyip(), 12356, 10)
-session_sendmessage(clientsock, "Hello")
+clientsock = openconnection(getmyip(), tcp_socket.client_socket_open, getmyip(), 12356, 1)
+#session_sendmessage(clientsock, "Hello")
 
 # Why do we get stuck after the call to openconn on port 63101...?
 log("Second conn\n")
-openconnection(getmyip(), serverport, getmyip(), 12356, timeout=5)
+openconnection(getmyip(),  tcp_socket.client_socket_open, getmyip(), 12357, 1)
 

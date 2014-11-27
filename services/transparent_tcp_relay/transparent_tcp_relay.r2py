@@ -258,7 +258,7 @@ def launch_server_communication_thread(sockobj, server_id):
     except SocketClosedRemote, err:
       logmsg("Socket closed. " + repr(err), DEBUG_MSG)
       unregister_server(server_id)
-      break
+      #break
       # Check if the server is requesting to see if there is any
       # clients waiting to be connected.
         

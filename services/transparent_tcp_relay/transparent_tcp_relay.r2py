@@ -26,11 +26,13 @@ MAX_BUFFER_LEN = 1400
 buffer = 4   # main and advertise thread, and two spares
 available_threads = getresources()[0]['events'] - buffer
 MAX_CLIENTS_PER_SERVER = 5
-MAX_SERVERS = max(1, int(available_threads/MAX_CLIENTS_PER_SERVER))
-
+#MAX_SERVERS = max(1, int(available_threads/MAX_CLIENTS_PER_SERVER))
+MAX_SERVERS = 5
 INFO_MSG = 1
 ERR_MSG = 2
 DEBUG_MSG = 3
+
+#client_port_opened = 
 
 registered_server = {}
 register_lock = createlock()
@@ -94,8 +96,9 @@ def tcp_forwarder_listener():
       if conn_type == SERVER_REGISTER:
         # This is the case where a new server wants to register to this
         # NAT Forwarder.
-        createthread(register_new_server(remote_ip, remote_port, conn_id, sockobj))
+        client_port_opened=createthread(register_new_server(remote_ip, remote_port, conn_id, sockobj))
         logmsg("Registered server " + remote_ip + ":" + str(remote_port), DEBUG_MSG)
+        return client_port_opened
       elif conn_type == CONNECT_SERVER_TAG:
         # This is the case when a registered server opens up a connection to
         # the forwarder in order for it to be connected to a client.
@@ -170,7 +173,7 @@ def register_new_server(remote_ip, remote_port, server_id, sockobj):
         # Launch a thread that waits for any communication from the server.
         # Such that if a server checks to see if there is any client waiting,
         # it responds.
-        createthread(launch_server_communication_thread(sockobj, server_id))
+        client_port_opened=createthread(launch_server_communication_thread(sockobj, server_id))
         
         try:
           session.session_sendmessage(sockobj, CONNECT_SUCCESS)
@@ -192,8 +195,8 @@ def register_new_server(remote_ip, remote_port, server_id, sockobj):
           (server_id, remote_ip, str(remote_port)), INFO_MSG)
     except Exception, e:
       logmsg("Error " + repr(e), INFO_MSG)
-
-
+    
+    return client_port_opened
   return _register_server_helper
   
 
@@ -240,27 +243,29 @@ def launch_server_communication_thread(sockobj, server_id):
     allowed_tcp_ports = list(getresources()[0]["connport"])
     random.random_shuffle(allowed_tcp_ports)
     
-    
+    client_port_opened = None
+    #client_socket = None
     #while True:
     for client_port in allowed_tcp_ports:
       try:
-        client_socket = listenforconnection(getmyip(), client_port)
+        client_socket = listenforconnection(getmyip(), 12355)
         logmsg("Opening Client Port:" + str(client_port), INFO_MSG)
         #createthread(listen_for_client(client_socket, server_id, sockobj))
+        #client_port_opened = client_port
         break
       except Exception, e:
         logmsg("Error in listenforconnection on " + str(getmyip()) + " port "
             + str(client_port), DEBUG_MSG)
         sleep(1)
-    
-    client_socket_open = client_port
-          
+        break
+     
+    client_port_opened = client_port   
+    #logmsg("Port " + client_port_opened, DEBUG_MSG)  
     try:
       session.session_sendmessage(sockobj, str(client_port))
     except SocketClosedRemote, err:
       logmsg("Socket closed. " + repr(err), DEBUG_MSG)
       unregister_server(server_id)
-      #break
       # Check if the server is requesting to see if there is any
       # clients waiting to be connected.
         
@@ -290,6 +295,7 @@ def launch_server_communication_thread(sockobj, server_id):
     # Once we have broken out of the loop, unregister the server 
     # before we exit this thread.
     #unregister_server(server_id)
+    return client_port_opened
       
   
   return _server_communication_helper
@@ -314,9 +320,12 @@ def listen_for_client(client_socket, server_id, serversockobj):
         session.session_sendmessage(serversockobj, CLIENT_AVAILABLE)
         createthread(handle_client_request(client_ip, client_port, server_id, clientsockobj))
       except SocketWouldBlockError:
+        #log("Hello")
         sleep(SLEEP_TIME)
+        #break
       except Exception, err:
         logmsg("Error in getconnection: " + str(err), ERR_MSG)
+        break
         
   return _client_listener 
 
@@ -678,7 +687,7 @@ I'll let you proceed regardless. You hopefully know what you do.""", ERR_MSG)
 
 # Launch the TCP Forwarder.
   logmsg("Creating forwarder thread on " + myip + ":" + str(myport), INFO_MSG)
-  createthread(tcp_forwarder_listener)
+  client_port_opened=createthread(tcp_forwarder_listener)
   # XXX Create a status thread to show the contents of the registered_server dict every ten minutes or so.
   # Launch advertiser and advertise this forwarders ip address, tcp port.
   advertise_value = myip + ':' + str(myport)

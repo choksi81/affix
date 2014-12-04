@@ -248,7 +248,7 @@ def launch_server_communication_thread(sockobj, server_id):
     #while True:
     for client_port in allowed_tcp_ports:
       try:
-        client_socket = listenforconnection(getmyip(), 12355)
+        client_socket = listenforconnection(getmyip(), client_port)
         logmsg("Opening Client Port:" + str(client_port), INFO_MSG)
         #createthread(listen_for_client(client_socket, server_id, sockobj))
         #client_port_opened = client_port

@@ -252,6 +252,7 @@ def launch_server_communication_thread(sockobj, server_id):
         logmsg("Error in listenforconnection on " + str(getmyip()) + " port "
             + str(client_port), DEBUG_MSG)
         sleep(1)
+        break
     
     client_socket_open = client_port
           

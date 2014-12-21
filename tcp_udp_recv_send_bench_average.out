@@ -1,0 +1,8 @@
+"Python TCP nonblock:" 128661.736713
+"Repy TCP nonblock:" 64649.4925722
+"Python TCP send/repy recv:" 79074.1606102
+"Python TCP recv/repy send:" 58559.5465538
+"Python UDP nonblock:" 63182.7534756
+"Repy UDP nonblock:" 29348.9170881
+"Python UDP send/repy recv nonblock:" 58057.9608478
+"Python UDP recv/repy send nonblock:" 5773.55803878

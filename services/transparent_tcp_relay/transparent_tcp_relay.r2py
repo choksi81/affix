@@ -31,8 +31,7 @@ MAX_SERVERS = 5
 INFO_MSG = 1
 ERR_MSG = 2
 DEBUG_MSG = 3
-
-#client_port_opened = 
+ 
 
 registered_server = {}
 register_lock = createlock()
@@ -173,7 +172,7 @@ def register_new_server(remote_ip, remote_port, server_id, sockobj):
         # Launch a thread that waits for any communication from the server.
         # Such that if a server checks to see if there is any client waiting,
         # it responds.
-        client_port_opened=createthread(launch_server_communication_thread(sockobj, server_id))
+        createthread(launch_server_communication_thread(sockobj, server_id))
         
         try:
           session.session_sendmessage(sockobj, CONNECT_SUCCESS)
@@ -196,7 +195,6 @@ def register_new_server(remote_ip, remote_port, server_id, sockobj):
     except Exception, e:
       logmsg("Error " + repr(e), INFO_MSG)
     
-    return client_port_opened
   return _register_server_helper
   
 
@@ -239,13 +237,11 @@ def launch_server_communication_thread(sockobj, server_id):
     # or any unexpected errors that arise.
     
     
+    # Selecting a random port to be opened for client-side communication
     
     allowed_tcp_ports = list(getresources()[0]["connport"])
     random.random_shuffle(allowed_tcp_ports)
     
-    client_port_opened = None
-    #client_socket = None
-    #while True:
     for client_port in allowed_tcp_ports:
       try:
         client_socket = listenforconnection(getmyip(), client_port)
@@ -259,45 +255,17 @@ def launch_server_communication_thread(sockobj, server_id):
         sleep(1)
         break
      
-    client_port_opened = client_port   
-    #logmsg("Port " + client_port_opened, DEBUG_MSG)  
+    # Send the information of selected-port back to the server
+    # so that server can advertise the port to the client
+    
     try:
       session.session_sendmessage(sockobj, str(client_port))
     except SocketClosedRemote, err:
       logmsg("Socket closed. " + repr(err), DEBUG_MSG)
       unregister_server(server_id)
-      # Check if the server is requesting to see if there is any
-      # clients waiting to be connected.
         
     createthread(listen_for_client(client_socket, server_id, sockobj))
       
-    """
-    #while True:  
-      try:
-        request_type = session.session_recvmessage(sockobj)
-        # Check if the server is requesting to see if there is any
-        # clients waiting to be connected.
-        if request_type == CHECK_SERVER_CONN:
-          if len(registered_server[server_id]['waiting_clients']) > 0:
-            session.session_sendmessage(sockobj, CLIENT_AVAILABLE)
-          else:
-            session.session_sendmessage(sockobj, CLIENT_UNAVAILABLE)    
-      except (SocketClosedRemote, SocketClosedLocal, session.SessionEOF), err:
-        break
-      except Exception, err:
-        logmsg("Unexpected error in launch_server_communication_thread: " + 
-          str(type(err)) + " " + str(err), ERR_MSG)
-        break
-    """
-
-    #sockobj.close()
-
-    # Once we have broken out of the loop, unregister the server 
-    # before we exit this thread.
-    #unregister_server(server_id)
-    return client_port_opened
-      
-  
   return _server_communication_helper
   
   
@@ -309,20 +277,16 @@ def launch_server_communication_thread(sockobj, server_id):
 def listen_for_client(client_socket, server_id, serversockobj):
 
   def _client_listener():
-    #logmsg("Opening Ports:", INFO_MSG)
     while True:
       try:
         # Try to see if there is any connection waiting.
-        #logmsg("Opening Ports1:", INFO_MSG)
       	client_ip, client_port, clientsockobj = client_socket.getconnection() # XXX Use a timeout socket instead to avoid malicious clients/servers blocking sockets forever  	
       	logmsg("Incoming connection from '%s:%d'" % (client_ip, client_port), 
             INFO_MSG)
         session.session_sendmessage(serversockobj, CLIENT_AVAILABLE)
         createthread(handle_client_request(client_ip, client_port, server_id, clientsockobj))
       except SocketWouldBlockError:
-        #log("Hello")
         sleep(SLEEP_TIME)
-        #break
       except Exception, err:
         logmsg("Error in getconnection: " + str(err), ERR_MSG)
         break

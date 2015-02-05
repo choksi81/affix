@@ -24,6 +24,7 @@ dy_import_module_symbols("tcp_relay_common_lib.r2py")
 advertise = dy_import_module("advertise.r2py") # for AdvertiseError
 cachedadvertise = dy_import_module("cachedadvertise.r2py")
 random = dy_import_module("random.r2py")
+advertisepipe = dy_import_module("advertisepipe.r2py")
 
 
 # The default timeout that is used when connecting to forwarder
@@ -96,10 +97,10 @@ class TransparentTCPRelayAffix(baseaffix.BaseAffix):
     # If optional arguments are provided, then store it as the default forwarder.
     if optional_args:
       assert(isinstance(optional_args, list)), "Bad optional args. Optional arg must be a list."
-      assert(len(optional_args) == 1), "Bad optional args. Optional args must contain 1 value. (IP:port)"
+      assert(len(optional_args) == 1), "Bad optional args. Optional args must contain 1 value. (IP:port:CLIENT_PORT_KEY)"
 
       try:
-        forwarder_ip, forwarder_port = optional_args[0].split(':')
+        forwarder_ip, forwarder_port, mycontext['CLIENT_PORT_KEY'] = optional_args[0].split(':')
         self.default_forwarder = [forwarder_ip, int(forwarder_port)]
       except ValueError:
         raise AffixInternalError("Optional arg provided is not of valid format. Must be IP:port.")
@@ -214,6 +215,10 @@ class TransparentTCPRelayAffix(baseaffix.BaseAffix):
     except SocketClosedRemote, err:
       raise DuplicateTupleError(repr(err))
 
+	
+    mycontext['client_facing_port'] = session.session_recvmessage(connection_socket) 
+    advertisepipe.add_to_pipe(mycontext['CLIENT_PORT_KEY'], mycontext['client_facing_port'])
+    
     connection_control_sockobj = NatSockObj(connection_socket, server_id)
     return affix_wrapper_lib.AffixTCPServerSocket(connection_control_sockobj, self)  
     
